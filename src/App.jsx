@@ -47,7 +47,8 @@ const WorkflowSystemsWebsite = () => {
         }
     };
 
-    const handleDownloadClick = () => {
+    const handleDownloadClick = (e) => {
+        e.preventDefault();
         setShowPasswordModal(true);
         setPassword('');
         setPasswordError('');
@@ -63,8 +64,8 @@ const WorkflowSystemsWebsite = () => {
 
             // Create a temporary link and trigger download
             const link = document.createElement('a');
-            link.href = '/your-app.apk'; // Replace with your APK filename
-            link.download = 'WorkflowSystems.apk'; // Suggested download name
+            link.href = '/app-debug.apk'; // Your APK filename
+            link.download = 'KidneyWise.apk'; // Suggested download name
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -294,20 +295,6 @@ const WorkflowSystemsWebsite = () => {
                             >
                                 View Solutions
                             </button>
-                            <button
-                                onClick={handleDownloadClick}
-                                style={{
-                                    border: `1px solid ${theme.accent}`,
-                                    color: theme.accent,
-                                    backgroundColor: 'transparent'
-                                }}
-                                className="px-8 py-4 rounded-lg font-medium transition-all duration-300 hover:opacity-80 flex items-center gap-2"
-                            >
-                                <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download App
-                            </button>
                         </motion.div>
                     </motion.div>
                 </div>
@@ -465,9 +452,8 @@ const WorkflowSystemsWebsite = () => {
                                 Built for clinical teams requiring mobile data capture capabilities.
                             </p>
 
-                            <a
-                                href="/app-debug.apk"
-                                download="KidneyWise.apk"
+                            <button
+                                onClick={handleDownloadClick}
                                 style={{ backgroundColor: theme.buttonBg }}
                                 className="inline-flex items-center gap-3 px-8 py-4 text-white rounded-lg font-medium transition-all duration-300 hover-lift hover:opacity-90"
                             >
@@ -475,7 +461,7 @@ const WorkflowSystemsWebsite = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
                                 Download APK (Android)
-                            </a>
+                            </button>
 
                             <p style={{ color: theme.textTertiary }} className="text-sm mt-6">
                                 Version 1.0.0 • Last updated: February 2026 • 15.2 MB
