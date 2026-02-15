@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import './App.css'
@@ -9,8 +5,14 @@ import './App.css'
 const WorkflowSystemsWebsite = () => {
     const [activeSection, setActiveSection] = useState('home');
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const { scrollYProgress } = useScroll();
     const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+    // Hardcoded password - change this to your desired password
+    const DOWNLOAD_PASSWORD = 'SecureApp2026';
 
     const navigation = [
         { id: 'home', label: 'Home' },
@@ -43,6 +45,38 @@ const WorkflowSystemsWebsite = () => {
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         }
+    };
+
+    const handleDownloadClick = () => {
+        setShowPasswordModal(true);
+        setPassword('');
+        setPasswordError('');
+    };
+
+    const handlePasswordSubmit = (e) => {
+        e.preventDefault();
+        if (password === DOWNLOAD_PASSWORD) {
+            // Password correct - trigger download
+            setShowPasswordModal(false);
+            setPassword('');
+            setPasswordError('');
+
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/your-app.apk'; // Replace with your APK filename
+            link.download = 'WorkflowSystems.apk'; // Suggested download name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            setPasswordError('Incorrect password. Please try again.');
+        }
+    };
+
+    const closeModal = () => {
+        setShowPasswordModal(false);
+        setPassword('');
+        setPasswordError('');
     };
 
     const fadeInUp = {
@@ -259,6 +293,20 @@ const WorkflowSystemsWebsite = () => {
                                 className="px-8 py-4 rounded-lg font-medium transition-all duration-300 hover:opacity-80"
                             >
                                 View Solutions
+                            </button>
+                            <button
+                                onClick={handleDownloadClick}
+                                style={{
+                                    border: `1px solid ${theme.accent}`,
+                                    color: theme.accent,
+                                    backgroundColor: 'transparent'
+                                }}
+                                className="px-8 py-4 rounded-lg font-medium transition-all duration-300 hover:opacity-80 flex items-center gap-2"
+                            >
+                                <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download App
                             </button>
                         </motion.div>
                     </motion.div>
@@ -940,6 +988,152 @@ const WorkflowSystemsWebsite = () => {
                     </div>
                 </div>
             </footer>
+
+            {/* Password Modal */}
+            {showPasswordModal && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999,
+                        backdropFilter: 'blur(4px)'
+                    }}
+                    onClick={closeModal}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            backgroundColor: theme.bg,
+                            border: `1px solid ${theme.border}`,
+                            borderRadius: '0.75rem',
+                            padding: '2rem',
+                            maxWidth: '28rem',
+                            width: '90%',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                        }}
+                    >
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{
+                                fontSize: '1.5rem',
+                                fontWeight: 600,
+                                marginBottom: '0.5rem',
+                                color: theme.text
+                            }}>
+                                Download Protected
+                            </h3>
+                            <p style={{ color: theme.textSecondary, fontSize: '0.875rem' }}>
+                                Enter the password to download the application
+                            </p>
+                        </div>
+
+                        <form onSubmit={handlePasswordSubmit}>
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label
+                                    style={{
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        marginBottom: '0.5rem',
+                                        color: theme.textSecondary
+                                    }}
+                                >
+                                    Password
+                                </label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setPasswordError('');
+                                    }}
+                                    placeholder="Enter password"
+                                    autoFocus
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem 1rem',
+                                        backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                                        border: `1px solid ${passwordError ? '#ef4444' : theme.border}`,
+                                        borderRadius: '0.5rem',
+                                        color: theme.text,
+                                        fontSize: '1rem',
+                                        outline: 'none',
+                                        transition: 'border-color 0.2s'
+                                    }}
+                                    onFocus={(e) => !passwordError && (e.target.style.borderColor = theme.accent)}
+                                    onBlur={(e) => !passwordError && (e.target.style.borderColor = theme.border)}
+                                />
+                                {passwordError && (
+                                    <p style={{
+                                        color: '#ef4444',
+                                        fontSize: '0.875rem',
+                                        marginTop: '0.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem'
+                                    }}>
+                                        <svg style={{ width: '1rem', height: '1rem' }} fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        {passwordError}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem 1.5rem',
+                                        border: `1px solid ${theme.border}`,
+                                        borderRadius: '0.5rem',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        color: theme.text,
+                                        backgroundColor: 'transparent',
+                                        cursor: 'pointer',
+                                        transition: 'opacity 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                                    onMouseLeave={(e) => e.target.style.opacity = '1'}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem 1.5rem',
+                                        backgroundColor: theme.buttonBg,
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        borderRadius: '0.5rem',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        cursor: 'pointer',
+                                        transition: 'opacity 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                                    onMouseLeave={(e) => e.target.style.opacity = '1'}
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 };
